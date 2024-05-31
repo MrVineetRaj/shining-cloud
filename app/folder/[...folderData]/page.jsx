@@ -9,56 +9,66 @@ import React, { useContext, useEffect, useState } from "react";
 const page = ({ params }) => {
   const { data: session } = useSession();
   const router = useRouter();
-  const {updateMessage} = useContext(CloudContext);
-  if (!session) {
-    router.push("/login");
-  } else if (session) {
-    const folderName = params.folderData[0].split("%20").join(" ");
-    const folderId = params.folderData[1];
-    
-    const {update,files, folders ,parentFolderId, updateParentFolderId} = useContext(CloudContext);
-    const [internalFolders, setInternalFolders] = useState([]);
-    const [internalFiles, setInternalFiles] = useState([]);
-    
-    const getFolders = () => {
-      let tempInternalFolders = folders.filter(folder=>folder.parentId == parentFolderId);
-      setInternalFolders(tempInternalFolders);
+  const { updateMessage } = useContext(CloudContext);
 
-    };
+  const { update, files, folders, parentFolderId, updateParentFolderId } =
+    useContext(CloudContext);
 
-    const getFiles = async () => {
-      let tempInternalFiles = files.filter(file=>file.parentFolder == parentFolderId);
+  const folderName = params.folderData[0].split("%20").join(" ");
+  const folderId = params.folderData[1];
 
-      setInternalFiles(tempInternalFiles);
-    };
+  const [internalFolders, setInternalFolders] = useState([]);
+  const [internalFiles, setInternalFiles] = useState([]);
 
-    useEffect(() => {
-      updateParentFolderId(folderId);
-    }, [folderId]);
+  useEffect(() => {
+    if (!session) {
+      router.push("/login");
+    }
+  }, [session, router]);
 
-    useEffect(() => {
-      if (session && parentFolderId == folderId) {
-        getFolders();
-        getFiles();
-      }
-    }, [session, parentFolderId, update]);
+  useEffect(() => {
+    updateParentFolderId(folderId);
+  }, [folderId]);
 
-    return (
-      <div className="mx-1 sm:mx-2 mt-4  sm:p-4">
-        <h1 className="text-2xl font-bold pb-2 border-b-2 border-b-gray-60">
-          {folderName}
-        </h1>
+  useEffect(() => {
+    if (session && parentFolderId == folderId) {
+      getFolders();
+      getFiles();
+    }
+  }, [session, parentFolderId, update]);
 
-        {internalFiles.length == 0 && internalFolders.length == 0 && (
-          <p className="font-bold text-xl mt-4 text-gray-600">
-            Nothing To show Here
-          </p>
-        )}
-        {internalFolders.length != 0 && <FolderList folderList={internalFolders} />}
-        {internalFiles.length != 0 && <FileList fileList={internalFiles} />}
-      </div>
+  const getFolders = () => {
+    let tempInternalFolders = folders.filter(
+      (folder) => folder.parentId == parentFolderId
     );
-  }
+    setInternalFolders(tempInternalFolders);
+  };
+
+  const getFiles = async () => {
+    let tempInternalFiles = files.filter(
+      (file) => file.parentFolder == parentFolderId
+    );
+
+    setInternalFiles(tempInternalFiles);
+  };
+
+  return (
+    <div className="mx-1 sm:mx-2 mt-4  sm:p-4">
+      <h1 className="text-2xl font-bold pb-2 border-b-2 border-b-gray-60">
+        {folderName}
+      </h1>
+
+      {internalFiles.length == 0 && internalFolders.length == 0 && (
+        <p className="font-bold text-xl mt-4 text-gray-600">
+          Nothing To show Here
+        </p>
+      )}
+      {internalFolders.length != 0 && (
+        <FolderList folderList={internalFolders} />
+      )}
+      {internalFiles.length != 0 && <FileList fileList={internalFiles} />}
+    </div>
+  );
 };
 
 export default page;

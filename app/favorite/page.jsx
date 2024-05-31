@@ -9,61 +9,54 @@ import React, { useContext, useEffect, useState } from "react";
 const StarMarked = () => {
   const { data: session } = useSession();
   const router = useRouter();
-  if (!session) {
-    router.push("/login");
-  } else if (session) {
-    const folderName = "Favorite";
-    
-    const { update, files, folders} =
-      useContext(CloudContext);
-    const [internalFolders, setInternalFolders] = useState([]);
-    const [internalFiles, setInternalFiles] = useState([]);
+  const { update, files, folders } = useContext(CloudContext);
+  const [internalFolders, setInternalFolders] = useState([]);
+  const [internalFiles, setInternalFiles] = useState([]);
 
-    const getFolders = () => {
-      
-      let tempInternalFolders = folders.filter(
-        (folder) => folder.stared == true
-      );
-      setInternalFolders(tempInternalFolders);
-    };
+  useEffect(() => {
+    if (!session) {
+      router.push("/login");
+    }
+  }, [session, router]);
 
-    const getFiles = async () => {
-      let tempInternalFiles = files.filter(
-        (file) => file.stared == true
-      );
+  const folderName = "Favorite";
 
-      setInternalFiles(tempInternalFiles);
-    };
+  const getFolders = useCallback(() => {
+    let tempInternalFolders = folders.filter((folder) => folder.stared == true);
+    setInternalFolders(tempInternalFolders);
+  }, [folders]);
 
+  const getFiles = useCallback(() => {
+    let tempInternalFiles = files.filter((file) => file.stared == true);
+    setInternalFiles(tempInternalFiles);
+  }, [files]);
+  
+  useEffect(() => {
+    getFolders();
+    getFiles();
+  }, [getFolders, getFiles]);
 
-    useEffect(() => {
-        getFolders();
-        getFiles();
-    }, [session, update]);
+  const openFolder = (index, folder) => {
+    router.push(`/folder/${folder.name}/${folder.id}`);
+  };
 
-    const openFolder = (index, folder) => {
-      
-      router.push(`/folder/${folder.name}/${folder.id}`);
-    };
+  return (
+    <div className="mx-1 sm:mx-2 mt-4  sm:p-4">
+      <h1 className="text-2xl font-bold pb-2 border-b-2 border-b-gray-60">
+        {folderName}
+      </h1>
 
-    return (
-      <div className="mx-1 sm:mx-2 mt-4  sm:p-4">
-        <h1 className="text-2xl font-bold pb-2 border-b-2 border-b-gray-60">
-          {folderName}
-        </h1>
-
-        {internalFiles.length == 0 && internalFolders.length == 0 && (
-          <p className="font-bold text-xl mt-4 text-gray-600">
-            Nothing To show Here
-          </p>
-        )}
-        {internalFolders.length != 0 && (
-          <FolderList folderList={internalFolders} />
-        )}
-        {internalFiles.length != 0 && <FileList fileList={internalFiles} />}
-      </div>
-    );
-  }
+      {internalFiles.length == 0 && internalFolders.length == 0 && (
+        <p className="font-bold text-xl mt-4 text-gray-600">
+          Nothing To show Here
+        </p>
+      )}
+      {internalFolders.length != 0 && (
+        <FolderList folderList={internalFolders} />
+      )}
+      {internalFiles.length != 0 && <FileList fileList={internalFiles} />}
+    </div>
+  );
 };
 
 export default StarMarked;
