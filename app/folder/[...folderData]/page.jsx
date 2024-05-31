@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
 
-const page = ({ params }) => {
+const Page = ({ params }) => {
   const { data: session } = useSession();
   const router = useRouter();
   const { updateMessage } = useContext(CloudContext);
@@ -71,4 +71,4 @@ const page = ({ params }) => {
   );
 };
 
-export default page;
+export default Page;
