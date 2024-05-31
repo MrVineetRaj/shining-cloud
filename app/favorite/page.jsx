@@ -4,7 +4,7 @@ import FolderList from "@/app/components/Folder/FolderList";
 import { CloudContext } from "@/context/cloudContext";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 
 const StarMarked = () => {
   const { data: session } = useSession();
