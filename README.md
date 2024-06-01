@@ -6,7 +6,7 @@ I created one Cloud application where you can store data online an access it whe
 
 Also used [next auth](https://next-auth.js.org/) as it is easy to use and also provide strong authentication
 
-### You can copy and run this project using these command in root directory
+### You can copy and run this project using these command in project directory
 
 ```bash
 npm install
